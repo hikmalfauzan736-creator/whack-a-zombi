@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Whack-A-Zombie</title>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg"></div>
+<div class="moon"></div>
+<div class="fog-layer"></div>
+<div class="sound-toggle" id="soundToggle" title="Toggle Sound">🔊</div>
+
+<!-- ===== MENU ===== -->
+<div class="screen active" id="menu">
+  <div><div class="game-title">Whack-A-Zombie</div><div class="game-subtitle">☠ Survive the Night ☠</div></div>
+  <div class="zombie-deco" id="menuDeco">🧟</div>
+  <div class="level-badge">
+    <div class="lv-num" id="menuLvNum">1</div>
+    <div class="lv-info">
+      <div class="lv-label">Level</div>
+      <div class="lv-bar-wrap"><div class="lv-bar" id="menuXpBar" style="width:0%"></div></div>
+      <div class="lv-xp-text" id="menuXpText">0 / 100 XP</div>
+    </div>
+  </div>
+  <div class="menu-card">
+    <h3>⚰ Difficulty</h3>
+    <div class="diff-btns">
+      <button class="diff-btn" data-diff="easy">Easy</button>
+      <button class="diff-btn active" data-diff="normal">Normal</button>
+      <button class="diff-btn" data-diff="hard">Hard</button>
+      <button class="diff-btn" data-diff="insane">Insane</button>
+    </div>
+  </div>
+  <div class="menu-btns">
+    <button class="start-btn" id="startBtn">⚡ Start ⚡</button>
+    <button class="icon-btn btn-race-o" id="raceBtn">🏁 Race</button>
+    <button class="icon-btn btn-skin-o" id="menuSkinBtn">🎨 Skins</button>
+    <button class="icon-btn btn-stat-o" id="menuStatBtn">📊 Stats</button>
+  </div>
+  <div class="lb-wrap">
+    <div class="lb-title" style="display:flex;justify-content:space-between;align-items:center;">🏆 Leaderboard<span id="onlineCount" style="font-size:12px;color:#3a7a3a;letter-spacing:1px;" title="">🟢 ...</span></div>
+    <div id="menuLbRows"><div style="color:#2a2a2a;font-size:12px;text-align:center">Belum ada skor...</div></div>
+  </div>
+</div>
+
+<!-- ===== RACE SCREEN ===== -->
+<div class="screen" id="raceScreen">
+  <div class="race-title">🏁 Race Mode</div>
+  <div class="race-sub">MAIN BARENG, SKOR LIVE!</div>
+
+  <div class="race-setup-card" id="raceSetupCard">
+    <div class="race-section">
+      <h3>Nama Kamu</h3>
+      <input class="name-input" id="raceNameInput" placeholder="Nama pemain..." maxlength="14">
+    </div>
+    <div class="race-section">
+      <h3>Room</h3>
+      <div class="race-room-btns">
+        <button class="race-action-btn btn-create" id="createRoomBtn">➕ Buat Room</button>
+        <div class="race-or">atau</div>
+        <div class="race-join-wrap">
+          <input class="name-input" id="joinRoomInput" placeholder="Kode room..." maxlength="6" style="width:120px;text-transform:uppercase;">
+          <button class="race-action-btn btn-join" id="joinRoomBtn">🚪 Join</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="race-lobby" id="raceLobby" style="display:none;">
+    <div class="race-code-wrap">
+      <div class="race-code-label">Kode Room</div>
+      <div class="race-code" id="raceCodeDisplay">------</div>
+      <div class="race-code-hint">Bagikan ke temen!</div>
+    </div>
+    <div class="race-players-lobby" id="racePlayersLobby"></div>
+    <button class="start-btn" id="startRaceBtn" style="font-size:20px;padding:10px 32px;">⚡ Mulai Race!</button>
+    <div class="race-waiting" id="raceWaiting" style="display:none;">⏳ Menunggu host mulai...</div>
+  </div>
+
+  <div class="race-result" id="raceResult" style="display:none;">
+    <div class="race-result-title">🏆 Hasil Race</div>
+    <div id="raceResultRows"></div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;">
+      <button class="btn-s btn-restart" id="racePlayAgainBtn">🔄 Main Lagi</button>
+      <button class="btn-s btn-menu2" id="raceBackMenuBtn">🏠 Menu</button>
+    </div>
+  </div>
+
+  <button class="btn-back" id="raceBackBtn">← Kembali</button>
+</div>
+
+<!-- ===== SKIN SCREEN ===== -->
+<div class="screen" id="skinScreen">
+  <div class="skin-title">🎨 Zombie Skins</div>
+  <div class="skin-sub">UNLOCK DENGAN NAIK LEVEL</div>
+  <div class="skin-grid" id="skinGrid"></div>
+  <button class="btn-back" id="skinBackBtn">← Kembali</button>
+</div>
+
+<!-- ===== STATS SCREEN ===== -->
+<div class="screen" id="statsScreen">
+  <div class="stats-title">📊 Statistik</div>
+  <div class="stats-grid" id="statsGrid">
+    <div class="stat-card gold-card"><div class="stat-icon">🏆</div><div class="stat-val" id="st-best">0</div><div class="stat-lbl">Best Score</div></div>
+    <div class="stat-card"><div class="stat-icon">🎮</div><div class="stat-val" id="st-games">0</div><div class="stat-lbl">Total Game</div></div>
+    <div class="stat-card green-card"><div class="stat-icon">🧟</div><div class="stat-val" id="st-hits">0</div><div class="stat-lbl">Total Zombie</div></div>
+    <div class="stat-card red-card"><div class="stat-icon">💣</div><div class="stat-val" id="st-traps">0</div><div class="stat-lbl">Kena Jebakan</div></div>
+    <div class="stat-card"><div class="stat-icon">⚡</div><div class="stat-val" id="st-combo">0</div><div class="stat-lbl">Best Combo</div></div>
+    <div class="stat-card"><div class="stat-icon">🎯</div><div class="stat-val" id="st-acc">0%</div><div class="stat-lbl">Akurasi</div></div>
+  </div>
+  <div class="streak-wrap">
+    <h4>🔥 Win Streak Terbaik</h4>
+    <div class="streak-val" id="st-streak">0</div>
+    <div class="streak-sub">game berturut tanpa kena jebakan</div>
+  </div>
+  <div class="diff-breakdown">
+    <h4>📈 Game per Difficulty</h4>
+    <div class="diff-row easy"><span class="diff-row-label">Easy</span><div class="diff-row-bar-wrap"><div class="diff-row-bar" id="bar-easy" style="width:0%"></div></div><span class="diff-row-count" id="cnt-easy">0</span></div>
+    <div class="diff-row normal"><span class="diff-row-label">Normal</span><div class="diff-row-bar-wrap"><div class="diff-row-bar" id="bar-normal" style="width:0%"></div></div><span class="diff-row-count" id="cnt-normal">0</span></div>
+    <div class="diff-row hard"><span class="diff-row-label">Hard</span><div class="diff-row-bar-wrap"><div class="diff-row-bar" id="bar-hard" style="width:0%"></div></div><span class="diff-row-count" id="cnt-hard">0</span></div>
+    <div class="diff-row insane"><span class="diff-row-label">Insane</span><div class="diff-row-bar-wrap"><div class="diff-row-bar" id="bar-insane" style="width:0%"></div></div><span class="diff-row-count" id="cnt-insane">0</span></div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <button class="btn-back" id="statBackBtn">← Kembali</button>
+    <button class="btn-reset-stats" id="resetStatsBtn">🗑 Reset Stats</button>
+  </div>
+</div>
+
+<!-- ===== GAME ===== -->
+<div class="screen" id="game">
+  <div class="hud">
+    <div class="hud-item"><div class="hud-label">Score</div><div class="hud-value" id="scoreDisplay">0</div></div>
+    <div class="hud-item"><div class="hud-label">Combo</div><div class="hud-value" id="comboDisplay">x1</div></div>
+    <div class="hud-item"><div class="hud-label">Hits</div><div class="hud-value" id="hitsDisplay">0</div></div>
+    <div class="hud-item"><div class="hud-label">Level</div><div class="hud-value gold-val" id="hudLv">1</div></div>
+    <div class="hud-item" style="display:flex;flex-direction:column;align-items:center">
+      <div class="hud-label">BGM</div>
+      <div class="vu-meter muted" id="vuMeter">
+        <div class="vu-bar"></div><div class="vu-bar"></div><div class="vu-bar"></div>
+        <div class="vu-bar"></div><div class="vu-bar"></div>
+      </div>
+    </div>
+    <div class="hud-item"><div class="hud-label">Time</div><div class="hud-value" id="timerDisplay">30</div></div>
+  </div>
+
+  <!-- WAVE BAR -->
+  <div class="wave-hud">
+    <div class="wave-badge" id="waveBadge">🌊 Wave 1</div>
+    <div class="wave-progress-wrap">
+      <div class="wave-progress-bar" id="waveProgressBar" style="width:0%"></div>
+    </div>
+    <div class="wave-info" id="waveInfo">0 / 10 kills</div>
+  </div>
+
+  <!-- RACE HUD -->
+  <div class="race-hud" id="raceHud" style="display:none;">
+    <div class="race-hud-title">🏁 RACE MODE</div>
+    <div class="race-players" id="racePlayers"></div>
+  </div>
+
+  <!-- POWERUP STATUS -->
+  <div class="powerup-bar" id="powerupBar"></div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- ===== END ===== -->
+<div class="screen" id="end">
+  <div class="end-title">☠ Game Over ☠</div>
+  <div class="final-score-wrap">
+    <div class="final-label">Final Score</div>
+    <div class="final-score" id="finalScore">0</div>
+    <div class="final-stats" id="finalStats"></div>
+    <div class="xp-gained" id="xpGained"></div>
+  </div>
+  <div class="lb-wrap">
+    <div class="lb-title">🏆 Leaderboard</div>
+    <div class="name-input-wrap">
+      <input class="name-input" id="playerName" placeholder="Nama kamu..." maxlength="14">
+      <button class="save-btn" id="saveScoreBtn">💾 Simpan</button>
+    </div>
+    <div id="lbRows"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-s btn-restart" id="restartBtn">🔄 Main Lagi</button>
+    <button class="btn-s btn-skins2" id="endSkinBtn">🎨 Skins</button>
+    <button class="btn-s btn-stats2" id="endStatBtn">📊 Stats</button>
+    <button class="btn-s btn-menu2" id="menuBtn">🏠 Menu</button>
+  </div>
+</div>
+
+<!-- Firebase CDN (module) — expose ke window agar script.js bisa akses -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-analytics.js";
+  import { getDatabase, ref, push, set, query, orderByChild, limitToLast, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB2KbDU6pi9o5Krv7lqZfcQBAoPZiPiKsg",
+    authDomain: "zombie-8f6bb.firebaseapp.com",
+    databaseURL: "https://zombie-8f6bb-default-rtdb.firebaseio.com",
+    projectId: "zombie-8f6bb",
+    storageBucket: "zombie-8f6bb.firebasestorage.app",
+    messagingSenderId: "337058228935",
+    appId: "1:337058228935:web:355201754ff2c5612e6ce2",
+    measurementId: "G-MBR8D9LJT4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db = getDatabase(app);
+
+  // Expose ke global window agar script.js (non-module) bisa pakai
+  window.firebaseDB = db;
+  window.firebaseRef = ref;
+  window.firebasePush = push;
+  window.firebaseQuery = query;
+  window.firebaseOrderByChild = orderByChild;
+  window.firebaseLimitToLast = limitToLast;
+  window.firebaseOnValue = onValue;
+  window.firebaseOnDisconnect = onDisconnect;
+  window.firebaseSetVal = set;
+  window.firebaseReady = true;
+</script>
+
+<!-- Game script — normal (bukan module), semua tombol & fungsi jalan normal -->
+<script src="script.js" defer></script>
+</body>
+</html>
